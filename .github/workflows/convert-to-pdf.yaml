@@ -2,14 +2,10 @@
 name: Rulebook markdown to PDF
 on:
   push:
-    branches:
-      - main
     paths:
       - core_*_rulebook.md
       - core_*_image/*
   pull_request:
-    branches:
-      - main
     paths:
       - core_*_rulebook.md
       - core_*_image/*
@@ -23,13 +19,14 @@ jobs:
       - uses: baileyjm02/markdown-to-pdf@v1
         with:
           input_path: core_common_rulebook.md
+          image_import: ./
           images_dir: ./core_common_image/
           output_dir: ./generated/
           build_html: false
       - uses: actions/upload-artifact@v4
         with:
-          name: Rulebooks
-          path: generated
+          name: core_common_rulebook
+          path: generated/core_common_rulebook.pdf
   build-1-rulebook:
     name: Build League 1 Rulebook
     runs-on: ubuntu-latest
@@ -38,13 +35,14 @@ jobs:
       - uses: baileyjm02/markdown-to-pdf@v1
         with:
           input_path: core_1_rulebook.md
+          image_import: ./
           images_dir: ./core_1_image/
           output_dir: ./generated/
           build_html: false
       - uses: actions/upload-artifact@v4
         with:
-          name: Rulebooks
-          path: generated
+          name: core_1_rulebook
+          path: generated/core_1_rulebook.pdf
   build-2-rulebook:
     name: Build League 2 Rulebook
     runs-on: ubuntu-latest
@@ -53,10 +51,24 @@ jobs:
       - uses: baileyjm02/markdown-to-pdf@v1
         with:
           input_path: core_2_rulebook.md
+          image_import: ./
           images_dir: ./core_2_image/
           output_dir: ./generated/
           build_html: false
       - uses: actions/upload-artifact@v4
         with:
+          name: core_2_rulebook
+          path: generated/core_2_rulebook.pdf
+  upload-rulebooks:
+    name: Upload Rulebooks
+    runs-on: ubuntu-latest
+    needs: [build-common-rulebook, build-1-rulebook, build-2-rulebook]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Upload final artifact
+        uses: actions/upload-artifact@v4
+        with:
           name: Rulebooks
-          path: generated
+          path: artifacts/**/*
