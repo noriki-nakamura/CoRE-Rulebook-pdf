@@ -2,14 +2,10 @@
 name: Rulebook markdown to PDF
 on:
   push:
-    branches:
-      - main
     paths:
       - core_*_rulebook.md
       - core_*_image/*
   pull_request:
-    branches:
-      - main
     paths:
       - core_*_rulebook.md
       - core_*_image/*
